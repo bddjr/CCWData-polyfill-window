@@ -2,11 +2,10 @@
 
 import fs from 'fs'
 import { minify_sync } from "terser";
-import { rimrafSync } from 'rimraf'
 import JSZip from 'jszip'
 import path from 'path'
 
-rimrafSync('dist')
+fs.rmSync('dist', { recursive: true, force: true })
 fs.mkdirSync('dist')
 
 const src = fs.readFileSync("src/KEY.js").toString()
@@ -22,14 +21,24 @@ const code = ''.concat(
     '/*<https://github.com/bddjr/CCWData-polyfill-window>*/toString.constructor`',
     result.code
         .replace(/;?\s*$/, '')
-        .replaceAll(/[()= \n\\`]|\$\{/g, (m) => {
+        .replaceAll(/[()= \\`\x00-\x1f\x7f]|\$\{/g, (m) => {
             switch (m) {
                 case '\\':
                 case '`':
                 case '${':
                     return '\\' + m
+                case '\b':
+                    return '\\b'
+                case '\t':
+                    return '\\t'
                 case '\n':
                     return '\\n'
+                case '\v':
+                    return '\\v'
+                case '\f':
+                    return '\\f'
+                case '\r':
+                    return '\\r'
             }
             return '\\x' + m.charCodeAt(0).toString(16).padStart(2, '0')
         })
