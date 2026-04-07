@@ -21,7 +21,7 @@ const code = ''.concat(
     '/*<https://github.com/bddjr/CCWData-polyfill-window>*/toString.constructor`',
     result.code
         .replace(/;?\s*$/, '')
-        .replaceAll(/[()= \\`\x00-\x1f\x7f]|\$\{/g, (m) => {
+        .replaceAll(/[\\`()=\s\0- \x7f]|\$\{/g, (m) => {
             switch (m) {
                 case '\\':
                 case '`':
@@ -40,7 +40,10 @@ const code = ''.concat(
                 case '\r':
                     return '\\r'
             }
-            return '\\x' + m.charCodeAt(0).toString(16).padStart(2, '0')
+            const code = m.charCodeAt(0)
+            return code > 0xff
+                ? '\\u' + code.toString(16).padStart(4, '0')
+                : '\\x' + code.toString(16).padStart(2, '0')
         })
     ,
     '```'
