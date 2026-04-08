@@ -29,3 +29,12 @@ function p(t) {
     }
 }
 ```
+
+下载并构建：
+
+```
+git clone https://github.com/bddjr/CCWData-polyfill-window
+cd CCWData-polyfill-window
+pnpm i
+pnpm build
+```
